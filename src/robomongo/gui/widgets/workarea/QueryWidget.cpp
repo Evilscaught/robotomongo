@@ -20,6 +20,7 @@
 #include "robomongo/core/domain/MongoDatabase.h"
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/domain/MongoShell.h"
+#include "robomongo/core/domain/TabCollection.h"
 #include "robomongo/core/domain/MongoAggregateInfo.h"
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/settings/ConnectionSettings.h"
@@ -142,6 +143,16 @@ namespace Robomongo
     void QueryWidget::toggleOrientation()
     {
         _viewer->toggleOrientation();
+    }
+
+    MongoServer *QueryWidget::explorerServer() const
+    {
+        return _shell ? _shell->explorerServer() : nullptr;
+    }
+
+    MongoNamespace QueryWidget::activeCollection() const
+    {
+        return TabCollection::fromResults(_currentResult.results(), _currentResult.currentDatabase());
     }
 
     void QueryWidget::openNewTab()

@@ -5,24 +5,12 @@
 #include <QPushButton>
 
 #include "robomongo/gui/widgets/workarea/RefreshSplitButton.h"
+#include "robomongo-unit-tests/QtTestApplication.h"
 
 using namespace Robomongo;
 
 namespace
 {
-    // Widgets need a QApplication; use the headless platform so no window is shown.
-    void ensureApplication()
-    {
-        if (QApplication::instance())
-            return;
-
-        qputenv("QT_QPA_PLATFORM", "offscreen");
-        static int argc = 1;
-        static char arg0[] = "robo_unit_tests";
-        static char *argv[] = { arg0, nullptr };
-        static QApplication app(argc, argv);
-    }
-
     // Background colour of the toggle, sampled from its left padding (clear of text and corners)
     QColor toggleBackground(RefreshSplitButton &button)
     {
@@ -71,7 +59,7 @@ namespace
 class RefreshSplitButtonTests : public ::testing::Test
 {
 protected:
-    static void SetUpTestCase() { ensureApplication(); }
+    static void SetUpTestCase() { ensureQtTestApplication(); }
 };
 
 TEST_F(RefreshSplitButtonTests, showsEnabledStateWhenAutoRefreshIsOn)

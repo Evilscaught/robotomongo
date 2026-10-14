@@ -426,6 +426,13 @@ namespace Robomongo
         VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
         optionsMenu->addAction(autoExpand);
 
+        QAction *autoReveal = new QAction("Auto Reveal Active Tab in Explorer", this);
+        autoReveal->setCheckable(true);
+        autoReveal->setChecked(AppRegistry::instance().settingsManager()->explorerAutoReveal());
+        autoReveal->setToolTip("Select the active tab's collection in the explorer (explorerAutoReveal)");
+        VERIFY(connect(autoReveal, SIGNAL(triggered()), this, SLOT(toggleExplorerAutoReveal())));
+        optionsMenu->addAction(autoReveal);
+
         QAction *showLineNumbers = new QAction("Show Line Numbers By Default", this);
         showLineNumbers->setCheckable(true);
         showLineNumbers->setChecked(AppRegistry::instance().settingsManager()->lineNumbers());
@@ -942,6 +949,26 @@ namespace Robomongo
         saveAutoExpand(send->isChecked());
     }
     
+    void MainWindow::toggleExplorerAutoReveal()
+    {
+        auto action = qobject_cast<QAction*>(sender());
+        AppRegistry::instance().settingsManager()->setExplorerAutoReveal(action->isChecked());
+        AppRegistry::instance().settingsManager()->save();
+
+        if (action->isChecked())
+            revealActiveTabInExplorer();
+    }
+
+    void MainWindow::revealActiveTabInExplorer()
+    {
+        if (!AppRegistry::instance().settingsManager()->explorerAutoReveal())
+            return;
+
+        auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
+        if (activeTab)
+            _explorer->revealCollection(activeTab->explorerServer(), activeTab->activeCollection());
+    }
+
     void MainWindow::toggleAutoExec()
     {
         QAction *send = qobject_cast<QAction*>(sender());
@@ -1364,6 +1391,7 @@ namespace Robomongo
         auto activeTab = dynamic_cast<QueryWidget*>(_workArea->currentWidget());
         if (activeTab) {
             activeTab->bringDockToFront();
+            revealActiveTabInExplorer();
         }
     }
 
