@@ -22,6 +22,8 @@ namespace Robomongo
     class MongoShell;
     class OutputItemHeaderWidget;
     class OutputWidget;
+    class InsertDocumentResponse;
+    struct RemoveDocumentResponse;
     class QueryResultExportLoadedEvent;
 
     class OutputItemContentWidget : public QWidget
@@ -69,6 +71,8 @@ namespace Robomongo
         void showCustom();
         void exportResults();
         void handle(QueryResultExportLoadedEvent *event);
+        void handle(InsertDocumentResponse *event);
+        void handle(RemoveDocumentResponse *event);
 
     private Q_SLOTS:
         void jsonPartReady(const QString &json);
@@ -81,6 +85,7 @@ namespace Robomongo
         void setup(double secs, bool multipleResults, bool tabbedResults, bool firstItem, bool lastItem);
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
+        void markOutdatedAfterWrite(const MongoNamespace &written);
         int visibleDocumentCount() const;
         std::vector<MongoDocumentPtr> visibleDocuments() const;
         MongoQueryInfo exportQueryInfo(int requestedLimit) const;

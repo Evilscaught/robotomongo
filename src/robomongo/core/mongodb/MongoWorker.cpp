@@ -613,7 +613,7 @@ namespace Robomongo
                 client->done();
             }
 
-            reply(event->sender(), new InsertDocumentResponse(this));
+            reply(event->sender(), new InsertDocumentResponse(this, event->ns()));
         } 
         catch(const std::exception &ex) {
             reply(event->sender(), new InsertDocumentResponse(this, EventError(ex.what())));
@@ -634,7 +634,8 @@ namespace Robomongo
                 client->done();
             }
 
-            reply(event->sender(), new RemoveDocumentResponse(this, event->removeCount(), event->index()));
+            reply(event->sender(), new RemoveDocumentResponse(this, event->removeCount(), event->index(),
+                                                               event->ns()));
         } 
         catch(const std::exception &ex) {
             reply(event->sender(), new RemoveDocumentResponse(this, EventError(ex.what()), 

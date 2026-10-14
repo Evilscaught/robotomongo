@@ -18,6 +18,8 @@
 #include "robomongo/core/domain/MongoAggregateInfo.h"
 #include "robomongo/core/domain/QueryResultExportPlan.h"
 #include "robomongo/core/domain/QueryResultFormatter.h"
+#include "robomongo/core/domain/ResultsStaleness.h"
+#include "robomongo/core/domain/MongoServer.h"
 
 #include "robomongo/gui/dialogs/ResultExportDialog.h"
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
@@ -123,6 +125,8 @@ namespace Robomongo
         setContentsMargins(0, 0, 0, 0);
         _header = new OutputItemHeaderWidget(this, multipleResults, tabbedResults, firstItem, lastItem);
         AppRegistry::instance().bus()->subscribe(this, QueryResultExportLoadedEvent::Type, _shell);
+        AppRegistry::instance().bus()->subscribe(this, InsertDocumentResponse::Type, _shell->server());
+        AppRegistry::instance().bus()->subscribe(this, RemoveDocumentResponse::Type, _shell->server());
 
         if (_queryInfo._info.isValid()) {
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
@@ -310,6 +314,30 @@ namespace Robomongo
         writeExportFile(event->documents(), _exportFilePath, _exportFormat);
     }
 
+    void OutputItemContentWidget::handle(InsertDocumentResponse *event)
+    {
+        if (!event->isError())
+            markOutdatedAfterWrite(event->ns());
+    }
+
+    void OutputItemContentWidget::handle(RemoveDocumentResponse *event)
+    {
+        if (!event->isError())
+            markOutdatedAfterWrite(event->ns);
+    }
+
+    void OutputItemContentWidget::markOutdatedAfterWrite(const MongoNamespace &written)
+    {
+        bool const autoRefresh = AppRegistry::instance().settingsManager()->autoRefreshResults();
+        bool const outdated = _queryInfo._info.isValid()
+            ? ResultsStaleness::findResultsOutdated(autoRefresh, _queryInfo._info._ns, written)
+            : _aggrInfo.isValid &&
+              ResultsStaleness::aggregateResultsOutdated(autoRefresh, _aggrInfo.collectionName, written);
+
+        if (outdated)
+            _header->setResultsOutdated(true);
+    }
+
     void OutputItemContentWidget::cancelExport()
     {
         _exportCanceled = true;
@@ -404,6 +432,7 @@ namespace Robomongo
     void OutputItemContentWidget::update(const std::vector<MongoDocumentPtr> &documents, int skip, int batchSize)
     {
         _documents = documents;
+        _header->setResultsOutdated(false);
 
         _header->paging()->setSkip(skip);
         _header->paging()->setBatchSize(batchSize);

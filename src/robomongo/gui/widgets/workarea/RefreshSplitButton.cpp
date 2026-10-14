@@ -13,12 +13,17 @@ namespace
     const char *const EnabledText = "Refresh Enabled";
     const char *const DisabledText = "Refresh Disabled";
     const int ButtonHeight = 22;
+    const char *const RefreshToolTip = "Refresh results";
+    const char *const OutdatedToolTip =
+        "Records are out of date: documents were changed since these results were loaded.\n"
+        "Click to refresh.";
 }
 
 namespace Robomongo
 {
     RefreshSplitButton::RefreshSplitButton(bool autoRefresh, QWidget *parent) :
-        QFrame(parent)
+        QFrame(parent),
+        _outdated(false)
     {
         setStyleSheet(
             "QPushButton#autoRefreshToggle {"
@@ -33,7 +38,15 @@ namespace Robomongo
             "  border-top-right-radius: 4px; border-bottom-right-radius: 4px; }"
             "QPushButton#manualRefresh:hover { background: palette(midlight); }"
             "QPushButton#manualRefresh:pressed { background: palette(mid); }"
-            "QPushButton#manualRefresh:disabled { background: palette(window); }");
+            "QPushButton#manualRefresh:disabled { background: palette(window); }"
+            // Outdated results: orange inner glow on the refresh button
+            "QPushButton#manualRefresh[outdated=\"true\"] {"
+            "  border: 1px solid #e8710a;"
+            "  background: qradialgradient(cx:0.5, cy:0.5, radius:0.75, fx:0.5, fy:0.5,"
+            "    stop:0 #fff4e5, stop:0.6 #ffd08a, stop:1 #ffa53d); }"
+            "QPushButton#manualRefresh[outdated=\"true\"]:hover {"
+            "  background: qradialgradient(cx:0.5, cy:0.5, radius:0.75, fx:0.5, fy:0.5,"
+            "    stop:0 #ffe8c7, stop:0.6 #ffbe5c, stop:1 #ff9417); }");
 
         _toggleButton = new QPushButton(this);
         _toggleButton->setObjectName("autoRefreshToggle");
@@ -44,7 +57,6 @@ namespace Robomongo
         _refreshButton->setObjectName("manualRefresh");
         _refreshButton->setIcon(style()->standardIcon(QStyle::SP_BrowserReload));
         _refreshButton->setIconSize(QSize(14, 14));
-        _refreshButton->setToolTip("Refresh results");
 
         // Rule of thirds: toggle takes 2/3 of the width, refresh button 1/3.
         // Sized for the longer label so the width does not change when toggled.
@@ -75,10 +87,25 @@ namespace Robomongo
         return _toggleButton->isChecked();
     }
 
+    void RefreshSplitButton::setOutdated(bool outdated)
+    {
+        _outdated = outdated;
+        updateState(autoRefresh());
+    }
+
+    bool RefreshSplitButton::showsOutdated() const
+    {
+        return _outdated && !autoRefresh();
+    }
+
     void RefreshSplitButton::onToggled(bool enabled)
     {
         updateState(enabled);
         emit autoRefreshToggled(enabled);
+
+        // Re-enabling auto-refresh should not leave outdated results on screen
+        if (enabled && _outdated)
+            emit refreshRequested();
     }
 
     void RefreshSplitButton::updateState(bool autoRefresh)
@@ -90,5 +117,14 @@ namespace Robomongo
             : "Results are not re-run after inserting, editing or deleting documents.\n"
               "Click to enable, or use the refresh button.");
         _refreshButton->setEnabled(!autoRefresh);
+
+        bool const outdated = showsOutdated();
+        _refreshButton->setToolTip(outdated ? OutdatedToolTip : RefreshToolTip);
+        if (_refreshButton->property("outdated").toBool() != outdated) {
+            _refreshButton->setProperty("outdated", outdated);
+            // Re-evaluate the stylesheet for the changed dynamic property
+            _refreshButton->style()->unpolish(_refreshButton);
+            _refreshButton->style()->polish(_refreshButton);
+        }
     }
 }

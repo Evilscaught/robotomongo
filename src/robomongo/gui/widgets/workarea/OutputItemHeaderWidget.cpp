@@ -307,6 +307,11 @@ namespace Robomongo
             _refreshSplitButton->show();
     }
 
+    void OutputItemHeaderWidget::setResultsOutdated(bool outdated)
+    {
+        _refreshSplitButton->setOutdated(outdated);
+    }
+
     void OutputItemHeaderWidget::toggleAutoRefresh(bool enabled)
     {
         auto const settings = AppRegistry::instance().settingsManager();
