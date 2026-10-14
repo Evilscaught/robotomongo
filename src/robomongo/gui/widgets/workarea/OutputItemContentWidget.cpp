@@ -128,6 +128,7 @@ namespace Robomongo
             _header->setCollection(QtUtils::toQString(_queryInfo._info._ns.collectionName()));
             _header->paging()->setBatchSize(_queryInfo._batchSize);
             _header->paging()->setSkip(_queryInfo._skip);
+            _header->showRefreshSplitButton();
             if (!_queryInfo._limit)
                 _queryInfo._limit = 50;
         }
@@ -137,6 +138,7 @@ namespace Robomongo
             _header->setCollection(QtUtils::toQString(_aggrInfo.collectionName));
             _header->paging()->setBatchSize(_aggrInfo.batchSize);
             _header->paging()->setSkip(_aggrInfo.skip);
+            _header->showRefreshSplitButton();
         }
 
         _header->setTime(QString("%1 sec.").arg(secs, 0, 'g', 3));

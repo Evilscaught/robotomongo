@@ -247,6 +247,11 @@ namespace Robomongo
         }
 
         // Success
+        if (!AppRegistry::instance().settingsManager()->autoRefreshResults()) {
+            mainWindow()->hideQueryWidgetProgressBar();
+            return;
+        }
+
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         _shell->query(0, _queryInfo);
     }
@@ -256,6 +261,9 @@ namespace Robomongo
        if (event->isError()) {
             if (!(event->removeCount == RemoveDocumentCount::MULTI && event->index > 0))
                 QMessageBox::warning(NULL, "Database Error", QString::fromStdString(event->error().errorMessage()));
+       }
+       else if (!AppRegistry::instance().settingsManager()->autoRefreshResults()) {
+           mainWindow()->hideQueryWidgetProgressBar();
        }
        else {   // Success
            std::this_thread::sleep_for(std::chrono::milliseconds(100));

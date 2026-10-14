@@ -13,6 +13,7 @@ namespace Robomongo
 {
     class OutputItemContentWidget;
     class Indicator;
+    class RefreshSplitButton;
 
     class OutputItemHeaderWidget : public QFrame
     {
@@ -28,6 +29,7 @@ namespace Robomongo
         void showCustom();
         void applyDockUndockSettings(bool docking);
         void toggleOrientation(Qt::Orientation orientation);
+        void showRefreshSplitButton();
 
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *);
@@ -40,6 +42,7 @@ namespace Robomongo
         void setTime(const QString &time);
         void setCollection(const QString &collection);
         void maximizeMinimizePart();
+        void toggleAutoRefresh(bool enabled);
 
     private:
         void updateDockButtonOnToggleOrientation() const;
@@ -49,6 +52,7 @@ namespace Robomongo
         QPushButton *_tableButton;
         QPushButton *_customButton;
         QPushButton *_exportButton;
+        RefreshSplitButton *_refreshSplitButton;
         QPushButton *_maxButton;
         QFrame *_verticalLine;
         QPushButton *_dockUndockButton;

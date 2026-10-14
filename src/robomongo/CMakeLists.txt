@@ -58,6 +58,7 @@ set(SOURCES
     core/mongodb/MongoWorker.cpp
     core/mongodb/ReplicaSet.cpp
     core/settings/SettingsManager.cpp
+    core/settings/ResultsRefreshSettings.cpp
     core/AppRegistry.cpp
     utils/StringOperations.cpp
     utils/common.cpp
@@ -127,6 +128,7 @@ set(SOURCES
     gui/widgets/workarea/JsonPrepareThread.cpp
     gui/widgets/workarea/OutputItemContentWidget.cpp
     gui/widgets/workarea/OutputItemHeaderWidget.cpp
+    gui/widgets/workarea/RefreshSplitButton.cpp
     gui/widgets/workarea/OutputWidget.cpp
     gui/widgets/workarea/PagingWidget.cpp
     gui/widgets/workarea/ProgressBarPopup.cpp

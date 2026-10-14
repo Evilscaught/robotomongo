@@ -1,4 +1,5 @@
 #include "robomongo/core/settings/SettingsManager.h"
+#include "robomongo/core/settings/ResultsRefreshSettings.h"
 
 #include <QDir>
 #include <QFile>
@@ -266,6 +267,8 @@ namespace Robomongo
         if (map.contains("checkForUpdates"))
             _checkForUpdates = map.value("checkForUpdates").toBool();
 
+        _autoRefreshResults = ResultsRefreshSettings::loadAutoRefresh(map);
+
         _currentStyle = map.value("style").toString();
         if (_currentStyle.isEmpty()) {
             _currentStyle = AppStyle::StyleName;
@@ -367,6 +370,7 @@ namespace Robomongo
         // 9. Save batchSize
         map.insert("batchSize", _batchSize);
         map.insert("checkForUpdates", _checkForUpdates);
+        ResultsRefreshSettings::saveAutoRefresh(map, _autoRefreshResults);
         map.insert("mongoTimeoutSec", _mongoTimeoutSec);
         map.insert("shellTimeoutSec", _shellTimeoutSec);
 

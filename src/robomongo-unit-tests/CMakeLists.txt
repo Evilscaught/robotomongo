@@ -25,6 +25,8 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/core/HexUtils_test.cpp
     ${ROBO_SRC_DIR}/core/domain/QueryResultFormatter_test.cpp
     ${ROBO_SRC_DIR}/core/domain/QueryResultExportPlan_test.cpp
+    ${ROBO_SRC_DIR}/core/settings/ResultsRefreshSettings_test.cpp
+    ${ROBO_SRC_DIR}/gui/widgets/workarea/RefreshSplitButton_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
