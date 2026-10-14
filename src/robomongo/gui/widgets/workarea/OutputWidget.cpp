@@ -13,6 +13,7 @@
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/ProgressBarPopup.h"
 #include "robomongo/gui/widgets/workarea/WorkAreaTabBar.h"
+#include "robomongo/core/domain/ResultPresentation.h"
 
 namespace Robomongo
 {
@@ -70,7 +71,7 @@ namespace Robomongo
             bool const lastItem = (RESULTS_SIZE-1 == i);
 
             OutputItemContentWidget* item = nullptr;
-            if (shellResult.documents().size() > 0) {
+            if (ResultPresentation::usesDocumentView(shellResult)) {
                 item = new OutputItemContentWidget(viewMode, shell, QtUtils::toQString(shellResult.type()),
                                                    shellResult.documents(), shellResult.queryInfo(), secs, 
                                                    multipleResults, _tabbedResults, firstItem, lastItem,
