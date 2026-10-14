@@ -1,7 +1,8 @@
 find_package(PkgConfig REQUIRED)
 
-pkg_check_modules(MONGOCXX REQUIRED IMPORTED_TARGET libmongocxx)
-pkg_check_modules(BSONCXX REQUIRED IMPORTED_TARGET libbsoncxx)
+# mongo-cxx-driver 4.x renamed its pkg-config modules to libmongocxx1/libbsoncxx1
+pkg_search_module(MONGOCXX REQUIRED IMPORTED_TARGET libmongocxx libmongocxx1)
+pkg_search_module(BSONCXX REQUIRED IMPORTED_TARGET libbsoncxx libbsoncxx1)
 pkg_check_modules(MONGOC_LEGACY IMPORTED_TARGET libmongoc-1.0)
 pkg_check_modules(BSON_LEGACY IMPORTED_TARGET libbson-1.0)
 
