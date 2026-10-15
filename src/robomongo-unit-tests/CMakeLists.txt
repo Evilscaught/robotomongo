@@ -60,6 +60,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/core/KeyboardManager_test.cpp
     ${ROBO_SRC_DIR}/gui/dialogs/ResultExportDialog_test.cpp
     ${ROBO_SRC_DIR}/core/mongodb/modern/ModernMongoDriver_integration_test.cpp
+    ${ROBO_SRC_DIR}/core/mongodb/MongoClient_integration_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
