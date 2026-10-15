@@ -5,6 +5,7 @@ namespace Robomongo
     namespace ExplorerSettings
     {
         const char *const AutoRevealKey = "explorerAutoReveal";
+        const char *const ShowCollectionSizesKey = "explorerShowCollectionSizes";
 
         bool loadAutoReveal(QVariantMap const& map)
         {
@@ -17,6 +18,16 @@ namespace Robomongo
         void saveAutoReveal(QVariantMap &map, bool autoReveal)
         {
             map.insert(AutoRevealKey, autoReveal);
+        }
+
+        bool loadShowCollectionSizes(QVariantMap const& map)
+        {
+            return map.value(ShowCollectionSizesKey, false).toBool();
+        }
+
+        void saveShowCollectionSizes(QVariantMap &map, bool showSizes)
+        {
+            map.insert(ShowCollectionSizesKey, showSizes);
         }
     }
 }

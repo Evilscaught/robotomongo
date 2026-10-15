@@ -270,6 +270,7 @@ namespace Robomongo
 
         _autoRefreshResults = ResultsRefreshSettings::loadAutoRefresh(map);
         _explorerAutoReveal = ExplorerSettings::loadAutoReveal(map);
+        _explorerShowCollectionSizes = ExplorerSettings::loadShowCollectionSizes(map);
 
         _currentStyle = map.value("style").toString();
         if (_currentStyle.isEmpty()) {
@@ -374,6 +375,7 @@ namespace Robomongo
         map.insert("checkForUpdates", _checkForUpdates);
         ResultsRefreshSettings::saveAutoRefresh(map, _autoRefreshResults);
         ExplorerSettings::saveAutoReveal(map, _explorerAutoReveal);
+        ExplorerSettings::saveShowCollectionSizes(map, _explorerShowCollectionSizes);
         map.insert("mongoTimeoutSec", _mongoTimeoutSec);
         map.insert("shellTimeoutSec", _shellTimeoutSec);
 

@@ -57,6 +57,11 @@ namespace Robomongo
             formatStorageSize(storageSizeBytes)));
     }
 
+    void ExplorerCollectionIndexItem::clearStorageSize()
+    {
+        setText(0, QtUtils::toQString(_info._name));
+    }
+
     void ExplorerCollectionIndexItem::ui_dropIndex()
     {
         // Ask user

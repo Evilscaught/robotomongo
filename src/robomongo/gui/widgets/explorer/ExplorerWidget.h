@@ -26,7 +26,8 @@ namespace Robomongo
         ~ExplorerWidget();
 
         QTreeWidgetItem* getSelectedTreeItem() const;
-        void refreshStorageStats();
+        // Fetch sizes for loaded databases, or hide all sizes
+        void setShowCollectionSizes(bool show);
         // Select the collection (or, if its items are not loaded, the database) in the tree
         void revealCollection(MongoServer *server, const MongoNamespace &ns);
 

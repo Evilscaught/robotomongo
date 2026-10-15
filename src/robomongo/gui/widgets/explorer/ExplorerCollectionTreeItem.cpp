@@ -140,6 +140,17 @@ namespace Robomongo
             formatStorageSize(storageSizeBytes)));
     }
 
+    void ExplorerCollectionTreeItem::clearStorageSizes()
+    {
+        setText(0, QtUtils::toQString(_collection->name()));
+        _pendingIndexSizes.clear();
+
+        for (int i = 0; i < _indexDir->childCount(); ++i) {
+            if (auto item = dynamic_cast<ExplorerCollectionIndexItem *>(_indexDir->child(i)))
+                item->clearStorageSize();
+        }
+    }
+
     void ExplorerCollectionTreeItem::setIndexStorageSizes(
         const std::vector<std::pair<std::string, double>> &indexSizes)
     {

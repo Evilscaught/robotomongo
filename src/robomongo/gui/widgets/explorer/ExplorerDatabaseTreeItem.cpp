@@ -12,6 +12,8 @@
 #include "robomongo/core/domain/MongoServer.h"
 #include "robomongo/core/mongodb/MongoWorker.h"
 #include "robomongo/core/utils/QtUtils.h"
+#include "robomongo/core/utils/Logger.h"
+#include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/EventBus.h"
 
@@ -159,17 +161,37 @@ namespace Robomongo
         _database->loadFunctions();
     }
 
-    void ExplorerDatabaseTreeItem::refreshStorageStats()
+    void ExplorerDatabaseTreeItem::setShowStorageSizes(bool show)
     {
-        setText(0, QString("%1 ...").arg(QtUtils::toQString(_database->name())));
-        _pendingStorageStatsRefresh = true;
-
-        if (!_collectionsLoaded) {
-            expandCollections();
+        if (show) {
+            // Databases whose collections are not loaded fetch sizes when they load
+            if (_collectionsLoaded)
+                requestStorageStats();
             return;
         }
 
-        requestStorageStats();
+        clearStorageSizes();
+    }
+
+    void ExplorerDatabaseTreeItem::clearStorageSizes()
+    {
+        setText(0, QtUtils::toQString(_database->name()));
+
+        for (ExplorerTreeItem *folder : { static_cast<ExplorerTreeItem *>(_collectionFolderItem),
+                                          _collectionSystemFolderItem }) {
+            if (!folder)
+                continue;
+
+            for (int i = 0; i < folder->childCount(); ++i) {
+                if (auto item = dynamic_cast<ExplorerCollectionTreeItem *>(folder->child(i)))
+                    item->clearStorageSizes();
+            }
+        }
+    }
+
+    bool ExplorerDatabaseTreeItem::showStorageSizes() const
+    {
+        return AppRegistry::instance().settingsManager()->explorerShowCollectionSizes();
     }
 
     void ExplorerDatabaseTreeItem::handle(MongoDatabaseCollectionListLoadedEvent *event)
@@ -177,7 +199,6 @@ namespace Robomongo
         if (event->isError()) {
             _collectionFolderItem->setText(0, "Collections");
             _collectionFolderItem->setExpanded(false);
-            _pendingStorageStatsRefresh = false;
             _collectionsLoaded = false;
             setText(0, QtUtils::toQString(_database->name()));
             return;
@@ -192,7 +213,7 @@ namespace Robomongo
         // Do not expand, when we do not have collections
         if (count == 0) {
             _collectionFolderItem->setExpanded(false);
-            if (_pendingStorageStatsRefresh)
+            if (showStorageSizes())
                 requestStorageStats();
             return;
         }
@@ -214,7 +235,7 @@ namespace Robomongo
 
         showCollectionSystemFolderIfNeeded();
 
-        if (_pendingStorageStatsRefresh)
+        if (showStorageSizes())
             requestStorageStats();
     }
 
@@ -281,15 +302,17 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::handle(LoadDatabaseStorageStatsResponse *event)
     {
-        _pendingStorageStatsRefresh = false;
+        // Sizes may have been hidden while the request was in flight
+        if (!showStorageSizes()) {
+            clearStorageSizes();
+            return;
+        }
 
         if (event->isError()) {
+            // Fetched automatically, so no dialog; the database is shown without a size
             setText(0, QtUtils::toQString(_database->name()));
-            QMessageBox::information(
-                NULL,
-                "Error",
-                "Failed to refresh storage sizes.\n\nError:\n" +
-                    QtUtils::toQString(event->error().errorMessage()));
+            LOG_MSG("Failed to load storage sizes for database " + _database->name() + ": " +
+                    event->error().errorMessage(), mongo::logger::LogSeverity::Warning());
             return;
         }
 
@@ -322,6 +345,7 @@ namespace Robomongo
 
     void ExplorerDatabaseTreeItem::requestStorageStats()
     {
+        setText(0, QString("%1 ...").arg(QtUtils::toQString(_database->name())));
         _bus->send(_database->server()->worker(),
             new LoadDatabaseStorageStatsRequest(this, _database->name()));
     }

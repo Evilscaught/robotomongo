@@ -17,6 +17,7 @@ namespace Robomongo
             ExplorerCollectionIndexesDir *parent, const IndexInfo &info);
         std::string name() const { return _info._name; }
         void setStorageSize(double storageSizeBytes);
+        void clearStorageSize();
 
     private Q_SLOTS:
         void ui_dropIndex();
