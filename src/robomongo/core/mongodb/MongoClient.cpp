@@ -1,4 +1,5 @@
 #include "robomongo/core/mongodb/MongoClient.h"
+#include "robomongo/core/domain/CollectionOrder.h"
 
 #include "mongo/db/namespace_string.h"
 
@@ -64,7 +65,7 @@ namespace Robomongo
         for (auto const& coll : collList)
             collNames.push_back(dbname + '.' + coll.getStringField("name")); // todo: verify
 
-        std::sort(collNames.begin(), collNames.end());
+        CollectionOrder::sortNames(collNames);
         return collNames;
     }
 

@@ -1,4 +1,5 @@
 #include "robomongo/core/mongodb/modern/ModernMongoDriver.h"
+#include "robomongo/core/domain/CollectionOrder.h"
 
 #include <bsoncxx/json.hpp>
 #include <bsoncxx/builder/basic/document.hpp>
@@ -140,9 +141,11 @@ namespace Robomongo
         const std::string &databaseName) const
     {
         mongocxx::client client { mongocxx::uri(_uri) };
-        std::vector<MongoCollectionInfo> collections;
+        std::vector<std::string> names = client[databaseName].list_collection_names();
+        CollectionOrder::sortNames(names);
 
-        for (const auto &name : client[databaseName].list_collection_names())
+        std::vector<MongoCollectionInfo> collections;
+        for (const auto &name : names)
             collections.emplace_back(databaseName + "." + name);
 
         return collections;
