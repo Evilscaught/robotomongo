@@ -47,6 +47,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/core/mongodb/modern/ModernConnectionUri_test.cpp
     ${ROBO_SRC_DIR}/core/mongodb/modern/ModernBsonConversion_test.cpp
     ${ROBO_SRC_DIR}/shell/bson/Json_test.cpp
+    ${ROBO_SRC_DIR}/shell/db/PtimeUtil_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
