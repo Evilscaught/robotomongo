@@ -133,6 +133,7 @@ target_link_libraries(robo_unit_tests
 # otherwise. Run them with:  cmake --build <build dir> --target run_isolated_tests
 set(SOURCES_ISOLATED_TEST
     ${ROBO_SRC_DIR}/core/settings/SettingsManager_isolated_test.cpp
+    ${ROBO_SRC_DIR}/gui/widgets/workarea/BsonTreeModel_isolated_test.cpp
 )
 
 add_executable(robo_isolated_tests ${CMAKE_CURRENT_SOURCE_DIR}/IsolatedMain.cpp ${SOURCES_ISOLATED_TEST})
