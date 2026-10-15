@@ -39,6 +39,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/core/domain/MongoDomainTypes_test.cpp
     ${ROBO_SRC_DIR}/core/domain/MongoUtils_test.cpp
     ${ROBO_SRC_DIR}/utils/SimpleCrypt_test.cpp
+    ${ROBO_SRC_DIR}/utils/RoboCryptKey_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
