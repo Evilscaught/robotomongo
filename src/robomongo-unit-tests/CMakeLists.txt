@@ -53,6 +53,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/utils/Utilities_test.cpp
     ${ROBO_SRC_DIR}/core/events/MongoEventsInfo_test.cpp
     ${ROBO_SRC_DIR}/core/domain/ScriptInfo_test.cpp
+    ${ROBO_SRC_DIR}/gui/widgets/workarea/BsonTreeItem_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
