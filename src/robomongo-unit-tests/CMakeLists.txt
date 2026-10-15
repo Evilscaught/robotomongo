@@ -35,6 +35,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/gui/widgets/workarea/RefreshSplitButton_test.cpp
     ${ROBO_SRC_DIR}/gui/widgets/workarea/EmptyResultsView_test.cpp
     ${ROBO_SRC_DIR}/core/domain/MongoNamespace_test.cpp
+    ${ROBO_SRC_DIR}/core/domain/MongoQueryInfo_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
