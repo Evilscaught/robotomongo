@@ -56,6 +56,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/gui/widgets/workarea/BsonTreeItem_test.cpp
     ${ROBO_SRC_DIR}/gui/widgets/workarea/BsonTableModel_test.cpp
     ${ROBO_SRC_DIR}/core/domain/NotifierSelection_test.cpp
+    ${ROBO_SRC_DIR}/core/EventBus_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
