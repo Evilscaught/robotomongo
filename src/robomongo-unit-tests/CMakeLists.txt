@@ -132,12 +132,17 @@ target_link_libraries(robo_unit_tests
 # config file and key paths are fixed from $HOME at startup. IsolatedMain.cpp refuses to run
 # otherwise. Run them with:  cmake --build <build dir> --target run_isolated_tests
 set(SOURCES_ISOLATED_TEST
+    ${ROBO_SRC_DIR}/core/settings/SettingsManager_isolated_test.cpp
 )
 
 add_executable(robo_isolated_tests ${CMAKE_CURRENT_SOURCE_DIR}/IsolatedMain.cpp ${SOURCES_ISOLATED_TEST})
 add_dependencies(robo_isolated_tests robomongo)
 target_include_directories(robo_isolated_tests PRIVATE ${CMAKE_HOME_DIRECTORY}/src)
-target_compile_definitions(robo_isolated_tests PRIVATE _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
+target_compile_definitions(robo_isolated_tests PRIVATE
+    _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION
+    # Same values as the app: the config file path is built from PROJECT_VERSION
+    PROJECT_NAME="${PROJECT_NAME}"
+    PROJECT_VERSION="${PROJECT_VERSION}")
 target_compile_options(robo_isolated_tests PRIVATE
     $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-enum-constexpr-conversion>)
 set_target_properties(robo_isolated_tests PROPERTIES AUTOMOC ON)
