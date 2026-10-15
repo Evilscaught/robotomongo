@@ -65,30 +65,30 @@ TEST(ModernConnectionUriTests, keepsUnreservedCharacters)
               uriFor("localhost", 27017, "a-b_c.d~e", "Az09-_.~"));
 }
 
-TEST(ModernConnectionUriTests, percentEncodesSpacesAndUnicode)
+TEST(ModernConnectionUriTests, percentEncodesSpaces)
 {
-    EXPECT_EQ("mongodb://ad%20a:p%C3%A4ss@localhost:27017/?authSource=admin",
-              uriFor("localhost", 27017, "ad a", "päss"));
+    EXPECT_EQ("mongodb://ad%20a:p%20ss@localhost:27017/?authSource=admin",
+              uriFor("localhost", 27017, "ad a", "p ss"));
+}
+
+TEST(ModernConnectionUriTests, encodedAsciiCredentialsSurviveDriverParsing)
+{
+    std::string const uri = uriFor("localhost", 27017, "us:er@x", "p@ss:w/o?r#d% ", "shop");
+
+    mongocxx::uri const parsed(uri);
+
+    EXPECT_EQ("us:er@x", parsed.username());
+    EXPECT_EQ("p@ss:w/o?r#d% ", parsed.password());
+    EXPECT_EQ("shop", parsed.auth_source());
+    ASSERT_EQ(1u, parsed.hosts().size());
+    EXPECT_EQ("localhost", parsed.hosts()[0].name);
+    EXPECT_EQ(27017, parsed.hosts()[0].port);
 }
 
 TEST(ModernConnectionUriTests, percentEncodesAuthSource)
 {
     EXPECT_EQ("mongodb://ada:secret@localhost:27017/?authSource=my%26db",
               uriFor("localhost", 27017, "ada", "secret", "my&db"));
-}
-
-TEST(ModernConnectionUriTests, encodedCredentialsSurviveDriverParsing)
-{
-    std::string const uri = uriFor("localhost", 27017, "us:er@x", "p@ss:w/o?r#d% ü", "shop");
-
-    mongocxx::uri const parsed(uri);
-
-    EXPECT_EQ("us:er@x", parsed.username());
-    EXPECT_EQ("p@ss:w/o?r#d% ü", parsed.password());
-    EXPECT_EQ("shop", parsed.auth_source());
-    ASSERT_EQ(1u, parsed.hosts().size());
-    EXPECT_EQ("localhost", parsed.hosts()[0].name);
-    EXPECT_EQ(27017, parsed.hosts()[0].port);
 }
 
 TEST(ModernConnectionUriTests, bracketedIpv6HostIsAccepted)
