@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <QApplication>
 #include <QDir>
 
 #include <gtest/gtest.h>
@@ -29,6 +30,11 @@ int main(int argc, char **argv)
             "    cmake --build <build dir> --target run_isolated_tests\n");
         return 2;
     }
+
+    // Owned by main() so it is destroyed before Qt's plugins are unloaded at exit (a static
+    // QApplication crashes during exit once widgets have created an offscreen GL context)
+    qputenv("QT_QPA_PLATFORM", "offscreen");
+    QApplication app(argc, argv);
 
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
