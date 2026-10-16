@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include <QPointer>
 #include "robomongo/core/events/MongoEvents.h"
 #include "robomongo/core/domain/ScriptInfo.h"
 #include "robomongo/core/domain/MongoAggregateInfo.h"
@@ -21,6 +22,9 @@ namespace Robomongo
         void autocomplete(const std::string &prefix);
         void stop();
         MongoServer *server() const { return _server; }
+        // Server shown in the explorer that this shell was opened from (server() is a private clone)
+        MongoServer *explorerServer() const;
+        void setExplorerServer(MongoServer *server);
         std::string query() const;
         void execute(const std::string &script = "", const std::string &dbName = "");
         bool isExecutable() const { return _scriptInfo.execute(); }
@@ -46,6 +50,7 @@ namespace Robomongo
         ScriptInfo _scriptInfo;
         AggrInfo _aggrInfo;
         MongoServer *_server;
+        QPointer<MongoServer> _explorerServer;
     };
 
 }

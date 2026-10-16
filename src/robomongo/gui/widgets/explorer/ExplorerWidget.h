@@ -27,6 +27,8 @@ namespace Robomongo
 
         QTreeWidgetItem* getSelectedTreeItem() const;
         void refreshStorageStats();
+        // Select the collection (or, if its items are not loaded, the database) in the tree
+        void revealCollection(MongoServer *server, const MongoNamespace &ns);
 
     protected Q_SLOTS:
         void handle(ConnectingEvent *event);

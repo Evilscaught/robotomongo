@@ -48,6 +48,7 @@ namespace Robomongo
         void enterTableMode();
         void enterCustomMode();
         void toggleAutoExpand();
+        void toggleExplorerAutoReveal();
         void toggleAutoExec();
         void toggleLineNumbers();
         void executeScript();
@@ -119,6 +120,7 @@ namespace Robomongo
         void openShellTimeoutDialog();
 
     private:
+        void revealActiveTabInExplorer();
         void updateConnectionsMenu();
         void createDatabaseExplorer();
         void createTabs();

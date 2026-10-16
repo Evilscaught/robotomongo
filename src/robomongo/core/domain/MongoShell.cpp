@@ -21,6 +21,16 @@ namespace Robomongo
     {
     }
 
+    MongoServer *MongoShell::explorerServer() const
+    {
+        return _explorerServer;
+    }
+
+    void MongoShell::setExplorerServer(MongoServer *server)
+    {
+        _explorerServer = server;
+    }
+
     void MongoShell::open(const std::string &script, const std::string &dbName)
     {
         eventBus()->publish(new ScriptExecutingEvent(this));

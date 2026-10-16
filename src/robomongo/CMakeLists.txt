@@ -35,6 +35,7 @@ set(SOURCES
     core/domain/QueryResultFormatter.cpp
     core/domain/QueryResultExportPlan.cpp
     core/domain/ResultsStaleness.cpp
+    core/domain/TabCollection.cpp
     core/domain/MongoQueryInfo.cpp
     core/domain/CursorPosition.cpp
     core/domain/ScriptInfo.cpp
@@ -60,6 +61,7 @@ set(SOURCES
     core/mongodb/ReplicaSet.cpp
     core/settings/SettingsManager.cpp
     core/settings/ResultsRefreshSettings.cpp
+    core/settings/ExplorerSettings.cpp
     core/AppRegistry.cpp
     utils/StringOperations.cpp
     utils/common.cpp
@@ -115,6 +117,7 @@ set(SOURCES
     # Isolated scope #7
     gui/widgets/explorer/ExplorerServerTreeItem.cpp
     gui/widgets/explorer/ExplorerTreeWidget.cpp
+    gui/widgets/explorer/ExplorerTreeReveal.cpp
     gui/widgets/explorer/ExplorerWidget.cpp
     gui/widgets/workarea/BsonTableModel.cpp
     gui/widgets/workarea/BsonTableView.cpp
