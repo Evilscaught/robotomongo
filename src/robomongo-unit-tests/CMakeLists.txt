@@ -27,10 +27,12 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/core/domain/QueryResultExportPlan_test.cpp
     ${ROBO_SRC_DIR}/core/domain/ResultsStaleness_test.cpp
     ${ROBO_SRC_DIR}/core/domain/TabCollection_test.cpp
+    ${ROBO_SRC_DIR}/core/domain/ResultPresentation_test.cpp
     ${ROBO_SRC_DIR}/gui/widgets/explorer/ExplorerTreeReveal_test.cpp
     ${ROBO_SRC_DIR}/core/settings/ResultsRefreshSettings_test.cpp
     ${ROBO_SRC_DIR}/core/settings/ExplorerSettings_test.cpp
     ${ROBO_SRC_DIR}/gui/widgets/workarea/RefreshSplitButton_test.cpp
+    ${ROBO_SRC_DIR}/gui/widgets/workarea/EmptyResultsView_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES

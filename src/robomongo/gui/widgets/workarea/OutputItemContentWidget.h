@@ -22,6 +22,7 @@ namespace Robomongo
     class MongoShell;
     class OutputItemHeaderWidget;
     class OutputWidget;
+    class EmptyResultsView;
     class InsertDocumentResponse;
     struct RemoveDocumentResponse;
     class QueryResultExportLoadedEvent;
@@ -85,6 +86,7 @@ namespace Robomongo
         void setup(double secs, bool multipleResults, bool tabbedResults, bool firstItem, bool lastItem);
         FindFrame *configureLogText();
         BsonTreeModel *configureModel();
+        bool showEmptyResultsIfNoDocuments();
         void markOutdatedAfterWrite(const MongoNamespace &written);
         int visibleDocumentCount() const;
         std::vector<MongoDocumentPtr> visibleDocuments() const;
@@ -95,6 +97,7 @@ namespace Robomongo
         FindFrame *_textView;
         BsonTreeView *_bsonTreeview;
         BsonTableView *_bsonTable;
+        EmptyResultsView *_emptyResults;
         BsonTreeModel *_mod;
         CollectionStatsTreeWidget *_collectionStats;
 

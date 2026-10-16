@@ -36,6 +36,7 @@ set(SOURCES
     core/domain/QueryResultExportPlan.cpp
     core/domain/ResultsStaleness.cpp
     core/domain/TabCollection.cpp
+    core/domain/ResultPresentation.cpp
     core/domain/MongoQueryInfo.cpp
     core/domain/CursorPosition.cpp
     core/domain/ScriptInfo.cpp
@@ -133,6 +134,7 @@ set(SOURCES
     gui/widgets/workarea/OutputItemContentWidget.cpp
     gui/widgets/workarea/OutputItemHeaderWidget.cpp
     gui/widgets/workarea/RefreshSplitButton.cpp
+    gui/widgets/workarea/EmptyResultsView.cpp
     gui/widgets/workarea/OutputWidget.cpp
     gui/widgets/workarea/PagingWidget.cpp
     gui/widgets/workarea/ProgressBarPopup.cpp
