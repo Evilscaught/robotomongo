@@ -166,8 +166,13 @@ elseif(SYSTEM_MACOSX)
         NAMES macdeployqt
         HINTS "${QT_BIN_DIR}" "/opt/homebrew/opt/qt@5/bin" "/usr/local/opt/qt@5/bin")
 
-    set(MONGOCXX_RUNTIME_LIBRARY "${MONGOCXX_LIBDIR}/libmongocxx._noabi.dylib")
-    set(BSONCXX_RUNTIME_LIBRARY "${BSONCXX_LIBDIR}/libbsoncxx._noabi.dylib")
+    # mongo-cxx-driver 3.x ships libmongocxx._noabi.dylib, 4.x ships libmongocxx1.1.dylib
+    find_file(MONGOCXX_RUNTIME_LIBRARY NAMES libmongocxx._noabi.dylib libmongocxx1.1.dylib
+        PATHS "${MONGOCXX_LIBDIR}" NO_DEFAULT_PATH)
+    find_file(BSONCXX_RUNTIME_LIBRARY NAMES libbsoncxx._noabi.dylib libbsoncxx1.1.dylib
+        PATHS "${BSONCXX_LIBDIR}" NO_DEFAULT_PATH)
+    get_filename_component(MONGOCXX_RUNTIME_NAME "${MONGOCXX_RUNTIME_LIBRARY}" NAME)
+    get_filename_component(BSONCXX_RUNTIME_NAME "${BSONCXX_RUNTIME_LIBRARY}" NAME)
     find_file(MONGOC2_RUNTIME_LIBRARY NAMES libmongoc2.2.dylib
         PATHS "/opt/homebrew/opt/mongo-c-driver/lib" "/usr/local/opt/mongo-c-driver/lib")
     find_file(BSON2_RUNTIME_LIBRARY NAMES libbson2.2.dylib
