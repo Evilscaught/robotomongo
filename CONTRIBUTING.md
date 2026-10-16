@@ -81,7 +81,7 @@ cmake -S . -B build/main-arm-v42 -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 Output:
 ```output
 -- Generating done (2.0s)
--- Build files have been written to: /Users/evilscaught/Documents/robotomongo/build/main-arm-v42
+-- Build files have been written to: /Users/<USERNAME>/Documents/robotomongo/build/main-arm-v42
 ```
 
 Build the application
