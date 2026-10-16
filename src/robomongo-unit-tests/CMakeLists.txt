@@ -138,6 +138,7 @@ set(SOURCES_ISOLATED_TEST
     ${ROBO_SRC_DIR}/gui/widgets/workarea/BsonTreeModel_isolated_test.cpp
     ${ROBO_SRC_DIR}/gui/widgets/workarea/PagingWidget_isolated_test.cpp
     ${ROBO_SRC_DIR}/gui/dialogs/DocumentTextEditor_isolated_test.cpp
+    ${ROBO_SRC_DIR}/gui/dialogs/ConnectionAuthTab_isolated_test.cpp
 )
 
 add_executable(robo_isolated_tests ${CMAKE_CURRENT_SOURCE_DIR}/IsolatedMain.cpp ${SOURCES_ISOLATED_TEST})
