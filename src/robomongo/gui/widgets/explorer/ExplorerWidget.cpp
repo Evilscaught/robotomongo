@@ -59,37 +59,11 @@ namespace Robomongo
         return _treeWidget->currentItem();
     }
 
-    void ExplorerWidget::refreshStorageStats()
+    void ExplorerWidget::setShowCollectionSizes(bool show)
     {
-        QTreeWidgetItem *selectedItem = getSelectedTreeItem();
-
-        if (auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(selectedItem)) {
-            collectionItem->databaseItem()->refreshStorageStats();
-            return;
-        }
-
-        if (auto databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(selectedItem)) {
-            databaseItem->refreshStorageStats();
-            return;
-        }
-
-        if (auto categoryItem = dynamic_cast<ExplorerDatabaseCategoryTreeItem *>(selectedItem)) {
-            auto databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(categoryItem->parent());
-            if (databaseItem) {
-                databaseItem->refreshStorageStats();
-                return;
-            }
-        }
-
-        if (auto serverItem = dynamic_cast<ExplorerServerTreeItem *>(selectedItem)) {
-            serverItem->refreshStorageStats();
-            return;
-        }
-
-        for (int i = 0; i < _treeWidget->topLevelItemCount(); ++i) {
-            auto serverItem = dynamic_cast<ExplorerServerTreeItem *>(_treeWidget->topLevelItem(i));
-            if (serverItem)
-                serverItem->refreshStorageStats();
+        for (QTreeWidgetItemIterator it(_treeWidget); *it; ++it) {
+            if (auto databaseItem = dynamic_cast<ExplorerDatabaseTreeItem *>(*it))
+                databaseItem->setShowStorageSizes(show);
         }
     }
 

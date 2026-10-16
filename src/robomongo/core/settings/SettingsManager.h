@@ -145,6 +145,9 @@ namespace Robomongo
         void setExplorerAutoReveal(bool autoReveal) { _explorerAutoReveal = autoReveal; }
         bool explorerAutoReveal() const { return _explorerAutoReveal; }
 
+        void setExplorerShowCollectionSizes(bool showSizes) { _explorerShowCollectionSizes = showSizes; }
+        bool explorerShowCollectionSizes() const { return _explorerShowCollectionSizes; }
+
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
@@ -233,6 +236,7 @@ namespace Robomongo
         bool _checkForUpdates = true;
         bool _autoRefreshResults = true;
         bool _explorerAutoReveal = true;
+        bool _explorerShowCollectionSizes = false;
         QString _currentStyle;
         QString _textFontFamily;
         int _textFontPointSize;

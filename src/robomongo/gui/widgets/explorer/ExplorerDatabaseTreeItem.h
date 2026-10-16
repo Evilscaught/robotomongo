@@ -38,7 +38,8 @@ namespace Robomongo
         void expandCollections();
         void expandUsers();
         void expandFunctions();
-        void refreshStorageStats();
+        // Fetch (when collections are loaded) or hide sizes after the setting changes
+        void setShowStorageSizes(bool show);
         void expandColection(ExplorerCollectionTreeItem *const item);
         void dropIndexFromCollection(ExplorerCollectionTreeItem *const item, const std::string &indexName);
         void addEditIndex(ExplorerCollectionTreeItem *const item, 
@@ -64,6 +65,8 @@ namespace Robomongo
 
     private:
         void requestStorageStats();
+        void clearStorageSizes();
+        bool showStorageSizes() const;
         void addCollectionItem(MongoCollection *collection);
         void addSystemCollectionItem(MongoCollection *collection);
         void showCollectionSystemFolderIfNeeded();
@@ -76,7 +79,6 @@ namespace Robomongo
         ExplorerDatabaseCategoryTreeItem *_functionsFolderItem;
         ExplorerDatabaseCategoryTreeItem *_usersFolderItem;
         ExplorerTreeItem *_collectionSystemFolderItem;
-        bool _pendingStorageStatsRefresh = false;
         bool _collectionsLoaded = false;
         MongoDatabase *const _database;
     };

@@ -128,7 +128,6 @@ namespace Robomongo
         _logDock(nullptr), _workArea(nullptr), _explorer(nullptr), _app(AppRegistry::instance().app()), 
         _connectionsMenu(nullptr), _connectButton(nullptr), _viewMenu(nullptr), _toolbarsMenu(nullptr), 
         _connectAction(nullptr), _openAction(nullptr), _saveAction(nullptr), _saveAsAction(nullptr),
-        _refreshDatabaseSizesAction(nullptr),
         _executeAction(nullptr), _stopAction(nullptr), _orientationAction(nullptr), _execToolBar(nullptr),
 #if defined(Q_OS_WIN)
         _trayIcon(nullptr),
@@ -167,12 +166,6 @@ namespace Robomongo
         _saveAsAction = new QAction(tr("Save &As..."), this);
         _saveAsAction->setShortcuts(QKeySequence::SaveAs);
         VERIFY(connect(_saveAsAction, SIGNAL(triggered()), this, SLOT(saveAs())));
-
-        _refreshDatabaseSizesAction = new QAction(
-            QIcon(":/robomongo/icons/database_16x16.png"),
-            tr("Sizes"), this);
-        _refreshDatabaseSizesAction->setToolTip(tr("Refresh database and collection sizes"));
-        VERIFY(connect(_refreshDatabaseSizesAction, SIGNAL(triggered()), this, SLOT(refreshDatabaseSizes())));
 
         // Exit action
         QAction *exitAction = new QAction("&Exit", this);
@@ -426,12 +419,23 @@ namespace Robomongo
         VERIFY(connect(autoExpand, SIGNAL(triggered()), this, SLOT(toggleAutoExpand())));
         optionsMenu->addAction(autoExpand);
 
-        QAction *autoReveal = new QAction("Auto Reveal Active Tab in Explorer", this);
+        QMenu *explorerMenu = optionsMenu->addMenu("Explorer");
+        explorerMenu->setToolTipsVisible(true);
+
+        QAction *autoReveal = new QAction("Auto Reveal Tabs", this);
         autoReveal->setCheckable(true);
         autoReveal->setChecked(AppRegistry::instance().settingsManager()->explorerAutoReveal());
         autoReveal->setToolTip("Select the active tab's collection in the explorer (explorerAutoReveal)");
         VERIFY(connect(autoReveal, SIGNAL(triggered()), this, SLOT(toggleExplorerAutoReveal())));
-        optionsMenu->addAction(autoReveal);
+        explorerMenu->addAction(autoReveal);
+
+        QAction *showCollectionSizes = new QAction("Show Collection Sizes", this);
+        showCollectionSizes->setCheckable(true);
+        showCollectionSizes->setChecked(AppRegistry::instance().settingsManager()->explorerShowCollectionSizes());
+        showCollectionSizes->setToolTip("Show storage sizes of expanded databases, collections and indexes "
+                                        "(explorerShowCollectionSizes)");
+        VERIFY(connect(showCollectionSizes, SIGNAL(triggered()), this, SLOT(toggleExplorerShowCollectionSizes())));
+        explorerMenu->addAction(showCollectionSizes);
 
         QAction *showLineNumbers = new QAction("Show Line Numbers By Default", this);
         showLineNumbers->setCheckable(true);
@@ -577,15 +581,6 @@ namespace Robomongo
         _execToolBar->setVisible(true /*toolbarsSettings["exec"].toBool()*/);
         setToolBarIconSize(_execToolBar);
         addToolBar(_execToolBar);
-
-        QToolBar *databaseToolBar = new QToolBar(tr("Database Tools Toolbar"), this);
-        databaseToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        databaseToolBar->addAction(_refreshDatabaseSizesAction);
-        databaseToolBar->setMovable(false);
-        databaseToolBar->setVisible(true);
-        _toolbarsMenu->addAction(databaseToolBar->toggleViewAction());
-        setToolBarIconSize(databaseToolBar);
-        addToolBar(databaseToolBar);
 
         _updateLabel = new QLabel;
         _updateLabel->setWordWrap(true);
@@ -959,6 +954,14 @@ namespace Robomongo
             revealActiveTabInExplorer();
     }
 
+    void MainWindow::toggleExplorerShowCollectionSizes()
+    {
+        auto action = qobject_cast<QAction*>(sender());
+        AppRegistry::instance().settingsManager()->setExplorerShowCollectionSizes(action->isChecked());
+        AppRegistry::instance().settingsManager()->save();
+        _explorer->setShowCollectionSizes(action->isChecked());
+    }
+
     void MainWindow::revealActiveTabInExplorer()
     {
         if (!AppRegistry::instance().settingsManager()->explorerAutoReveal())
@@ -1043,12 +1046,6 @@ namespace Robomongo
     {
         QToolTip::showText(QPoint(0, 0),
         QString("Refresh not working yet... : <br/>  <b>Ctrl+D</b> : push Button"));
-    }
-
-    void MainWindow::refreshDatabaseSizes()
-    {
-        if (_explorer)
-            _explorer->refreshStorageStats();
     }
 
     void MainWindow::aboutRobomongo()

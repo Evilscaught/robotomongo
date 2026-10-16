@@ -30,6 +30,7 @@ namespace Robomongo
         ExplorerCollectionTreeItem(QTreeWidgetItem *parent, ExplorerDatabaseTreeItem *databaseItem, MongoCollection *collection);
         MongoCollection *collection() const { return _collection; }
         void setStorageSize(double storageSizeBytes);
+        void clearStorageSizes();
         void setIndexStorageSizes(const std::vector<std::pair<std::string, double>> &indexSizes);
         void refreshIndexesWithSizes(const std::vector<std::pair<std::string, double>> &indexSizes);
         void expand();

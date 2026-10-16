@@ -68,3 +68,44 @@ TEST(ExplorerSettingsTests, survivesConfigFileJsonRoundTrip)
     EXPECT_FALSE(ExplorerSettings::loadAutoReveal(loaded));
     EXPECT_EQ(50, loaded.value("batchSize").toInt());
 }
+
+TEST(ExplorerSettingsTests, collectionSizesAreHiddenWhenConfigHasNoValue)
+{
+    QVariantMap const map;
+    EXPECT_FALSE(ExplorerSettings::loadShowCollectionSizes(map));
+}
+
+TEST(ExplorerSettingsTests, loadsShownCollectionSizes)
+{
+    QVariantMap map;
+    map.insert("explorerShowCollectionSizes", true);
+    EXPECT_TRUE(ExplorerSettings::loadShowCollectionSizes(map));
+}
+
+TEST(ExplorerSettingsTests, loadsHiddenCollectionSizes)
+{
+    QVariantMap map;
+    map.insert("explorerShowCollectionSizes", false);
+    EXPECT_FALSE(ExplorerSettings::loadShowCollectionSizes(map));
+}
+
+TEST(ExplorerSettingsTests, savesCollectionSizesUnderConfigKey)
+{
+    QVariantMap map;
+    ExplorerSettings::saveShowCollectionSizes(map, true);
+    ASSERT_TRUE(map.contains("explorerShowCollectionSizes"));
+    EXPECT_TRUE(map.value("explorerShowCollectionSizes").toBool());
+
+    ExplorerSettings::saveShowCollectionSizes(map, false);
+    EXPECT_FALSE(map.value("explorerShowCollectionSizes").toBool());
+}
+
+TEST(ExplorerSettingsTests, explorerSettingsAreIndependent)
+{
+    QVariantMap map;
+    ExplorerSettings::saveAutoReveal(map, false);
+    ExplorerSettings::saveShowCollectionSizes(map, true);
+
+    EXPECT_FALSE(ExplorerSettings::loadAutoReveal(map));
+    EXPECT_TRUE(ExplorerSettings::loadShowCollectionSizes(map));
+}
