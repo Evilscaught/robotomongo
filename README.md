@@ -3,6 +3,7 @@ This project is forked from [reginaldoroge](https://github.com/reginaldoroge), a
 Please consider donating to `reginaldoroge@gmail.com` for reviving Robo3T and putting in the hard-work to converting it to Apple Silicon architecture.
 
 I am by no means knowledgable on programming with C++, so any changes made here have been for soley for my own convenience / leisure. 
+Use this software at your own risk, preferrably only local mongo databases. 
 
 # dino-robomongo 2.0.0
 
