@@ -36,6 +36,7 @@ set(SOURCES
     core/domain/QueryResultExportPlan.cpp
     core/domain/ResultsStaleness.cpp
     core/domain/TabCollection.cpp
+    core/domain/CollectionOrder.cpp
     core/domain/ResultPresentation.cpp
     core/domain/MongoQueryInfo.cpp
     core/domain/CursorPosition.cpp
