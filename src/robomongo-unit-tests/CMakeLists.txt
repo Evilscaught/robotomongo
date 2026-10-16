@@ -127,6 +127,46 @@ target_link_libraries(robo_unit_tests
     ${ROBO_OBJ_FILES}
 )
 
+### --- Isolated tests: code that uses AppRegistry/SettingsManager
+# These run in their own executable with HOME pointed at a scratch directory, because the
+# config file and key paths are fixed from $HOME at startup. IsolatedMain.cpp refuses to run
+# otherwise. Run them with:  cmake --build <build dir> --target run_isolated_tests
+set(SOURCES_ISOLATED_TEST
+)
+
+add_executable(robo_isolated_tests ${CMAKE_CURRENT_SOURCE_DIR}/IsolatedMain.cpp ${SOURCES_ISOLATED_TEST})
+add_dependencies(robo_isolated_tests robomongo)
+target_include_directories(robo_isolated_tests PRIVATE ${CMAKE_HOME_DIRECTORY}/src)
+target_compile_definitions(robo_isolated_tests PRIVATE _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
+target_compile_options(robo_isolated_tests PRIVATE
+    $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-enum-constexpr-conversion>)
+set_target_properties(robo_isolated_tests PROPERTIES AUTOMOC ON)
+if(SYSTEM_MACOSX)
+    target_link_libraries(robo_isolated_tests ${SSL_LIBRARIES} -lresolv)
+endif()
+target_link_libraries(robo_isolated_tests
+    gtest
+    Qt5::Widgets
+    Qt5::Network
+    Qt5::Xml
+    qjson
+    qscintilla
+    mongodb
+    MongoCxx::Driver
+    ssh
+    Threads::Threads
+    ${ROBO_OBJ_FILES}
+)
+
+set(ROBO_TEST_HOME ${CMAKE_BINARY_DIR}/robo-test-home)
+add_custom_target(run_isolated_tests
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${ROBO_TEST_HOME}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${ROBO_TEST_HOME}
+    COMMAND ${CMAKE_COMMAND} -E env HOME=${ROBO_TEST_HOME} ROBO_TEST_ISOLATED_HOME=${ROBO_TEST_HOME}
+            QT_QPA_PLATFORM=offscreen $<TARGET_FILE:robo_isolated_tests>
+    DEPENDS robo_isolated_tests
+    USES_TERMINAL)
+
 ### --- Install DLLs for Windows
 if(CMAKE_BUILD_TYPE STREQUAL "Debug") 
     set(D "d") 
