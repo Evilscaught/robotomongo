@@ -47,6 +47,12 @@ add_executable(robo_unit_tests ${SOURCES_TEST})
 add_dependencies(robo_unit_tests robomongo)
 target_include_directories(robo_unit_tests PRIVATE ${CMAKE_HOME_DIRECTORY}/src)
 
+# Same compatibility settings the app is built with (the MongoDB 4.2 headers use
+# std::unary_function, removed in C++17)
+target_compile_definitions(robo_unit_tests PRIVATE _LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
+target_compile_options(robo_unit_tests PRIVATE
+    $<$<CXX_COMPILER_ID:AppleClang,Clang>:-Wno-enum-constexpr-conversion>)
+
 get_target_property(ROBO_SOURCES robomongo SOURCES)
 list(FILTER ROBO_SOURCES INCLUDE REGEX "cpp")
 list(FILTER ROBO_SOURCES EXCLUDE REGEX "main.cpp")
