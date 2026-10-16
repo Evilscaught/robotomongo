@@ -1,3 +1,9 @@
+# ⚠️ VIBE-CODED ⚠️
+This project is forked from [reginaldoroge](https://github.com/reginaldoroge), a fork of [Robo3T](https://github.com/Studio3T/robomongo).
+Please consider donating to `reginaldoroge@gmail.com` for reviving Robo3T and putting in the hard-work to converting it to Apple Silicon architecture.
+
+I am by no means knowledgable on programming with C++, so any changes made here have been for soley for my own convenience / leisure. 
+
 # dino-robomongo 2.0.0
 
 dino-robomongo is a revival of Robo 3T focused on keeping the original app fast, native, and shell-centric while making it useful again with both legacy and modern MongoDB servers.
