@@ -43,6 +43,7 @@ set(SOURCES_TEST
     ${ROBO_SRC_DIR}/core/settings/CredentialSettings_test.cpp
     ${ROBO_SRC_DIR}/core/settings/SshSslSettings_test.cpp
     ${ROBO_SRC_DIR}/core/settings/ReplicaSetSettings_test.cpp
+    ${ROBO_SRC_DIR}/core/settings/ConnectionSettings_test.cpp
 )
 
 ### --- Setup robo_unit_tests exec. & link ROBO_OBJ_FILES
