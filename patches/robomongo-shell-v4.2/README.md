@@ -15,8 +15,11 @@ The patch makes the MongoDB shell 4.2 source compile on macOS ARM64 with C++17:
 - fixes `ExclusiveData.h` move construction for current compilers;
 - adjusts zlib's legacy `MACOS` branch so modern Apple builds use Unix paths;
 - adds Darwin `aarch64` signal context handling to SpiderMonkey;
-- creates `src/third_party/mozjs-60/platform/aarch64/macOS` from existing
-  SpiderMonkey platform files and switches `JS_CODEGEN_ARM64` on.
+- creates `src/third_party/mozjs-60/platform/aarch64/macOS`: the unified
+  source lists and `include` come from `aarch64/linux` (they depend on the
+  CPU), and `js-confdefs.h` comes from `x86_64/macOS` (it depends on the OS)
+  with `JS_CODEGEN_ARM64` switched on and the x86-only `HAVE_CPUID_H` and
+  `HAVE_VA_LIST_AS_ARRAY` removed.
 
 The shell build command used for the macOS ARM64 release was:
 
