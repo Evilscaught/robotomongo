@@ -34,6 +34,7 @@ set(SOURCES
     core/domain/MongoStorageStats.cpp
     core/domain/QueryResultFormatter.cpp
     core/domain/QueryResultExportPlan.cpp
+    core/domain/ResultsStaleness.cpp
     core/domain/MongoQueryInfo.cpp
     core/domain/CursorPosition.cpp
     core/domain/ScriptInfo.cpp

@@ -30,6 +30,7 @@ namespace Robomongo
         void applyDockUndockSettings(bool docking);
         void toggleOrientation(Qt::Orientation orientation);
         void showRefreshSplitButton();
+        void setResultsOutdated(bool outdated);
 
     protected:
         virtual void mouseDoubleClickEvent(QMouseEvent *);

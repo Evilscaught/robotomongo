@@ -40,6 +40,19 @@ namespace
         return color.red() > color.green() + 60 && color.red() > color.blue() + 60;
     }
 
+    // Background of the refresh button, sampled from its left edge (clear of the icon)
+    QColor refreshBackground(RefreshSplitButton &button)
+    {
+        QImage const image = button.refreshButton()->grab().toImage();
+        return image.pixelColor(3, image.height() / 2);
+    }
+
+    bool isOrange(QColor const& color)
+    {
+        return color.red() > 220 && color.green() > 120 && color.green() < 225 &&
+               color.red() - color.blue() > 80;
+    }
+
     struct SignalCounts
     {
         int refreshRequested = 0;
@@ -204,4 +217,98 @@ TEST_F(RefreshSplitButtonTests, colourFollowsToggle)
 
     EXPECT_TRUE(isRed(afterDisable)) << afterDisable.name().toStdString();
     EXPECT_TRUE(isGreen(afterEnable)) << afterEnable.name().toStdString();
+}
+
+TEST_F(RefreshSplitButtonTests, refreshButtonIsNotOutdatedByDefault)
+{
+    RefreshSplitButton button(false);
+    QColor const background = refreshBackground(button);
+
+    EXPECT_FALSE(button.isOutdated());
+    EXPECT_FALSE(button.showsOutdated());
+    EXPECT_EQ(QString("Refresh results"), button.refreshButton()->toolTip());
+    EXPECT_FALSE(isOrange(background)) << background.name().toStdString();
+}
+
+TEST_F(RefreshSplitButtonTests, outdatedResultsGlowOrangeWithExplanation)
+{
+    RefreshSplitButton button(false);
+    refreshBackground(button);     // already on screen before documents change
+
+    button.setOutdated(true);
+    QColor const background = refreshBackground(button);
+
+    EXPECT_TRUE(button.showsOutdated());
+    EXPECT_TRUE(button.refreshButton()->isEnabled());
+    EXPECT_TRUE(button.refreshButton()->toolTip().contains("out of date"));
+    EXPECT_TRUE(isOrange(background)) << background.name().toStdString();
+}
+
+TEST_F(RefreshSplitButtonTests, clearingOutdatedRemovesGlow)
+{
+    RefreshSplitButton button(false);
+    button.setOutdated(true);
+    QColor const whileOutdated = refreshBackground(button);
+
+    button.setOutdated(false);
+    QColor const background = refreshBackground(button);
+
+    EXPECT_FALSE(button.showsOutdated());
+    EXPECT_EQ(QString("Refresh results"), button.refreshButton()->toolTip());
+    EXPECT_TRUE(isOrange(whileOutdated)) << whileOutdated.name().toStdString();
+    EXPECT_FALSE(isOrange(background)) << background.name().toStdString();
+}
+
+TEST_F(RefreshSplitButtonTests, outdatedIsNotShownWhileAutoRefreshIsOn)
+{
+    RefreshSplitButton button(true);
+
+    button.setOutdated(true);
+    QColor const background = refreshBackground(button);
+
+    EXPECT_FALSE(button.showsOutdated());
+    EXPECT_FALSE(button.refreshButton()->toolTip().contains("out of date"));
+    EXPECT_FALSE(isOrange(background)) << background.name().toStdString();
+}
+
+TEST_F(RefreshSplitButtonTests, enablingAutoRefreshRefreshesOutdatedResults)
+{
+    RefreshSplitButton button(false);
+    button.setOutdated(true);
+    SignalCounts counts;
+    track(button, counts);
+
+    button.toggleButton()->click();
+
+    EXPECT_EQ(1, counts.refreshRequested);
+    EXPECT_FALSE(button.showsOutdated());
+    ASSERT_EQ(1u, counts.toggled.size());
+    EXPECT_TRUE(counts.toggled[0]);
+}
+
+TEST_F(RefreshSplitButtonTests, enablingAutoRefreshDoesNotRefreshCurrentResults)
+{
+    RefreshSplitButton button(false);
+    SignalCounts counts;
+    track(button, counts);
+
+    button.toggleButton()->click();
+
+    EXPECT_EQ(0, counts.refreshRequested);
+}
+
+TEST_F(RefreshSplitButtonTests, disablingAutoRefreshShowsPendingOutdatedState)
+{
+    RefreshSplitButton button(true);
+    button.setOutdated(true);
+    refreshBackground(button);     // drawn while auto-refresh hides the indicator
+    SignalCounts counts;
+    track(button, counts);
+
+    button.toggleButton()->click();
+    QColor const background = refreshBackground(button);
+
+    EXPECT_TRUE(button.showsOutdated());
+    EXPECT_EQ(0, counts.refreshRequested);
+    EXPECT_TRUE(isOrange(background)) << background.name().toStdString();
 }
