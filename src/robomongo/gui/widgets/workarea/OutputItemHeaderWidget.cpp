@@ -11,6 +11,7 @@
 #include "robomongo/gui/widgets/workarea/OutputWidget.h"
 #include "robomongo/gui/widgets/workarea/OutputItemContentWidget.h"
 #include "robomongo/gui/widgets/workarea/IndicatorLabel.h"
+#include "robomongo/gui/widgets/workarea/RefreshSplitButton.h"
 #include "robomongo/core/AppRegistry.h"
 #include "robomongo/core/settings/SettingsManager.h"
 
@@ -87,6 +88,12 @@ namespace Robomongo
         _exportButton->setFixedSize(24, 24);
         _exportButton->setFlat(true);
 
+        // Auto-refresh split button: left 2/3 toggles auto-refresh, right 1/3 refreshes manually
+        _refreshSplitButton = new RefreshSplitButton(
+            AppRegistry::instance().settingsManager()->autoRefreshResults(), this);
+        _refreshSplitButton->hide();
+        VERIFY(connect(_refreshSplitButton, SIGNAL(autoRefreshToggled(bool)), this, SLOT(toggleAutoRefresh(bool))));
+
         // Create maximize button only if there are multiple results
         if (_multipleResults && !tabbedResults) {
             _maxButton = new QPushButton;
@@ -120,6 +127,7 @@ namespace Robomongo
         _collectionIndicator->hide();
         _timeIndicator->hide();
         _paging->hide();
+        VERIFY(connect(_refreshSplitButton, SIGNAL(refreshRequested()), _paging, SLOT(refresh())));
 
         QHBoxLayout *layout = new QHBoxLayout();
 #ifdef __APPLE__
@@ -133,6 +141,8 @@ namespace Robomongo
         QSpacerItem *hSpacer = new QSpacerItem(2000, 24, QSizePolicy::Preferred, QSizePolicy::Minimum);
         layout->addSpacerItem(hSpacer);
         if (outputItemContentWidget->isTreeModeSupported()) {
+            layout->addWidget(_refreshSplitButton, 0, Qt::AlignRight);
+            layout->addSpacing(4);
             layout->addWidget(_exportButton, 0, Qt::AlignRight);
             _exportButton->show();
         }
@@ -289,7 +299,21 @@ namespace Robomongo
 
         _maximized = !_maximized;
     }
-    
+
+    void OutputItemHeaderWidget::showRefreshSplitButton()
+    {
+        // Only placed in the header layout when tree mode is supported
+        if (layout()->indexOf(_refreshSplitButton) != -1)
+            _refreshSplitButton->show();
+    }
+
+    void OutputItemHeaderWidget::toggleAutoRefresh(bool enabled)
+    {
+        auto const settings = AppRegistry::instance().settingsManager();
+        settings->setAutoRefreshResults(enabled);
+        settings->save();
+    }
+
     void OutputItemHeaderWidget::updateDockButtonOnToggleOrientation() const
     {
         if (!_multipleResults)

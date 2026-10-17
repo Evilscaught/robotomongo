@@ -139,6 +139,9 @@ namespace Robomongo
         void setCheckForUpdates(bool checkForUpdates) { _checkForUpdates = checkForUpdates; }
         bool checkForUpdates() const { return _checkForUpdates; }
 
+        void setAutoRefreshResults(bool autoRefreshResults) { _autoRefreshResults = autoRefreshResults; }
+        bool autoRefreshResults() const { return _autoRefreshResults; }
+
         void setBatchSize(int batchSize) { _batchSize = batchSize; }
         int batchSize() const { return _batchSize; }
 
@@ -225,6 +228,7 @@ namespace Robomongo
         QSet<QString> _dbVersionsConnected;
         int _batchSize;
         bool _checkForUpdates = true;
+        bool _autoRefreshResults = true;
         QString _currentStyle;
         QString _textFontFamily;
         int _textFontPointSize;
