@@ -24,6 +24,7 @@ namespace Robomongo
     class OutputWidget;
     class ScriptWidget;
     class MongoShell;
+    class MongoServer;
 
     class QueryWidget : public QWidget
     {
@@ -38,6 +39,9 @@ namespace Robomongo
 
         void toggleOrientation();
         void activateTabContent();
+        // Server in the explorer this tab belongs to, and the collection its results show
+        MongoServer *explorerServer() const;
+        MongoNamespace activeCollection() const;
         void openNewTab();
         void reload();
         void duplicate();

@@ -209,6 +209,17 @@ namespace Robomongo
                                                              cursorPosition, shellName, filePathToSave));
     }
 
+    MongoServer *App::explorerServerFor(MongoServer *server) const
+    {
+        // Shells opened from another tab are given that tab's server clone
+        for (auto const& shell : _shells) {
+            if (shell->server() == server)
+                return shell->explorerServer();
+        }
+
+        return server;
+    }
+
     void App::openShell(MongoServer* server, ConnectionSettings* connection, const ScriptInfo &scriptInfo)
     {
         auto serverClone{ openServerInternal(connection, ConnectionSecondary) };
@@ -216,6 +227,7 @@ namespace Robomongo
             return;
 
         auto shell{ std::make_unique<MongoShell>(serverClone.get(), scriptInfo) };
+        shell->setExplorerServer(explorerServerFor(server));
         _servers.push_back(move(serverClone));
         // Connection between explorer's server and tab's MongoShells
         _bus->subscribe(server, ReplicaSetRefreshed::Type, shell.get()); 

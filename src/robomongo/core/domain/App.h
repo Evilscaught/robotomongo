@@ -93,6 +93,8 @@ namespace Robomongo
         void handle(LogEvent *event);
 
     private:
+        MongoServer *explorerServerFor(MongoServer *server) const;
+
         std::unique_ptr<MongoServer> openServerInternal(ConnectionSettings* connSettings, ConnectionType type);
         
         std::unique_ptr<MongoServer> 

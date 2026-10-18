@@ -1,5 +1,6 @@
 #include "robomongo/core/settings/SettingsManager.h"
 #include "robomongo/core/settings/ResultsRefreshSettings.h"
+#include "robomongo/core/settings/ExplorerSettings.h"
 
 #include <QDir>
 #include <QFile>
@@ -268,6 +269,7 @@ namespace Robomongo
             _checkForUpdates = map.value("checkForUpdates").toBool();
 
         _autoRefreshResults = ResultsRefreshSettings::loadAutoRefresh(map);
+        _explorerAutoReveal = ExplorerSettings::loadAutoReveal(map);
 
         _currentStyle = map.value("style").toString();
         if (_currentStyle.isEmpty()) {
@@ -371,6 +373,7 @@ namespace Robomongo
         map.insert("batchSize", _batchSize);
         map.insert("checkForUpdates", _checkForUpdates);
         ResultsRefreshSettings::saveAutoRefresh(map, _autoRefreshResults);
+        ExplorerSettings::saveAutoReveal(map, _explorerAutoReveal);
         map.insert("mongoTimeoutSec", _mongoTimeoutSec);
         map.insert("shellTimeoutSec", _shellTimeoutSec);
 

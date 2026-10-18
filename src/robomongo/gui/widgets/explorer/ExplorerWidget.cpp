@@ -18,6 +18,10 @@
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetTreeItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerReplicaSetFolderItem.h"
 #include "robomongo/gui/widgets/explorer/ExplorerUserTreeItem.h"
+#include "robomongo/gui/widgets/explorer/ExplorerTreeReveal.h"
+#include "robomongo/core/domain/MongoCollection.h"
+#include "robomongo/core/domain/MongoDatabase.h"
+#include <QTreeWidgetItemIterator>
 #include "robomongo/utils/common.h"
 
 namespace Robomongo
@@ -164,6 +168,31 @@ namespace Robomongo
     void ExplorerWidget::handle(ConnectionFailedEvent *event)
     {
         decreaseProgress();
+    }
+
+    void ExplorerWidget::revealCollection(MongoServer *server, const MongoNamespace &ns)
+    {
+        if (!server || !ns.isValid())
+            return;
+
+        QTreeWidgetItem *databaseItem = nullptr;
+        for (QTreeWidgetItemIterator it(_treeWidget); *it; ++it) {
+            if (auto collectionItem = dynamic_cast<ExplorerCollectionTreeItem *>(*it)) {
+                MongoCollection *collection = collectionItem->collection();
+                if (collection->database()->server() == server && collection->fullName() == ns.toString()) {
+                    revealExplorerItem(_treeWidget, collectionItem);
+                    return;
+                }
+            }
+            else if (auto dbItem = dynamic_cast<ExplorerDatabaseTreeItem *>(*it)) {
+                MongoDatabase *database = dbItem->database();
+                if (!databaseItem && database->server() == server && database->name() == ns.databaseName())
+                    databaseItem = dbItem;
+            }
+        }
+
+        if (databaseItem)
+            revealExplorerItem(_treeWidget, databaseItem);
     }
 
     void ExplorerWidget::ui_itemExpanded(QTreeWidgetItem *item)
