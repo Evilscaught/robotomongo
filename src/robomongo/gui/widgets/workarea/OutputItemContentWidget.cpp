@@ -29,6 +29,8 @@
 #include "robomongo/gui/widgets/workarea/BsonTreeModel.h"
 #include "robomongo/gui/widgets/workarea/BsonTableView.h"
 #include "robomongo/gui/widgets/workarea/BsonTableModel.h"
+#include "robomongo/gui/widgets/workarea/EmptyResultsView.h"
+#include "robomongo/core/domain/Notifier.h"
 #include "robomongo/gui/editors/PlainJavaScriptEditor.h"
 #include "robomongo/gui/widgets/workarea/CollectionStatsTreeWidget.h"
 #include "robomongo/gui/GuiRegistry.h"
@@ -55,6 +57,7 @@ namespace Robomongo
         _bsonTreeview(NULL),
         _thread(NULL),
         _bsonTable(NULL),
+        _emptyResults(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(false),
         _isTableModeSupported(false),
@@ -92,6 +95,7 @@ namespace Robomongo
         _bsonTreeview(NULL),
         _thread(NULL),
         _bsonTable(NULL),
+        _emptyResults(NULL),
         _isTextModeSupported(true),
         _isTreeModeSupported(true),
         _isTableModeSupported(true),
@@ -458,6 +462,12 @@ namespace Robomongo
             delete _textView;
             _textView = NULL;
         }
+
+        if (_emptyResults) {
+            _stack->removeWidget(_emptyResults);
+            delete _emptyResults;
+            _emptyResults = NULL;
+        }
         configureModel();
     }
 
@@ -465,6 +475,8 @@ namespace Robomongo
     {
         _viewMode = Text;
         _header->showText();
+        if (showEmptyResultsIfNoDocuments())
+            return;
         if (!_isTextModeSupported)
             return;
 
@@ -494,6 +506,8 @@ namespace Robomongo
     {
         _viewMode = Tree;
         _header->showTree();
+        if (showEmptyResultsIfNoDocuments())
+            return;
         if (!_isTreeModeSupported) {
             // try to downgrade to text mode
             showText();
@@ -521,6 +535,8 @@ namespace Robomongo
     {
         _viewMode = Custom;
         _header->showCustom();
+        if (showEmptyResultsIfNoDocuments())
+            return;
 
         if (!_isCustomModeSupported) {
             // try to downgrade to tree mode
@@ -546,6 +562,8 @@ namespace Robomongo
     {
         _viewMode = Table;
         _header->showTable();
+        if (showEmptyResultsIfNoDocuments())
+            return;
         if (!_isTableModeSupported) {
             // try to downgrade to text mode
             showText();
@@ -611,6 +629,27 @@ namespace Robomongo
         delete _mod;
         _mod = new BsonTreeModel(_documents, this);
         return _mod;
+    }
+
+    bool OutputItemContentWidget::showEmptyResultsIfNoDocuments()
+    {
+        if (!_documents.empty() || !_queryInfo._info.isValid())
+            return false;
+
+        if (!_emptyResults) {
+            _emptyResults = new EmptyResultsView(configureLogText(), this);
+
+            // Same insert action, dialog and refresh behaviour as the document views
+            auto notifier = new Notifier(_emptyResults, _shell, _queryInfo, _emptyResults);
+            bool const isProjection = !_queryInfo._fields.isEmpty();
+            if (!isProjection)
+                _emptyResults->setInsertDocumentAction(notifier->insertDocumentAction());
+
+            _stack->addWidget(_emptyResults);
+        }
+
+        _stack->setCurrentWidget(_emptyResults);
+        return true;
     }
 
     FindFrame *Robomongo::OutputItemContentWidget::configureLogText()

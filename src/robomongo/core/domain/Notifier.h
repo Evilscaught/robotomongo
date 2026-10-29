@@ -45,6 +45,7 @@ namespace Robomongo
         Notifier(INotifierObserver *const observer, MongoShell *shell, const MongoQueryInfo &queryInfo, QObject *parent = NULL);
         void initMenu(QMenu *const menu, BsonTreeItem *const item);
         void initMultiSelectionMenu(QMenu *const menu);
+        QAction *insertDocumentAction() const { return _insertDocumentAction; }
 
         void deleteDocuments(std::vector<BsonTreeItem*> const& items, bool force);
         void handleDeleteCommand();
